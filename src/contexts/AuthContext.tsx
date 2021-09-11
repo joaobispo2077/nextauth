@@ -1,5 +1,7 @@
 import React, { createContext, useState } from 'react';
 
+import { api } from '../services/api';
+
 type SignInCredentials = {
   email: string;
   password: string;
@@ -16,8 +18,16 @@ export const AuthProvider: React.FC = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   async function signIn(credentials: SignInCredentials) {
-    console.log(credentials);
-    setIsAuthenticated(true);
+    try {
+      const response = await api.post('/sessions', credentials);
+      console.log('response', response.data);
+      console.log(credentials);
+      setIsAuthenticated(true);
+    } catch (err: any) {
+      console.error(err);
+      console.error(err.name);
+      console.error(err.message);
+    }
   }
 
   return (
