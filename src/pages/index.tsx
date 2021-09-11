@@ -17,6 +17,9 @@ const Home: NextPage = () => {
     console.log(email, password);
     await signIn({ email, password });
     console.log('isAuthenticated', isAuthenticated);
+
+    setEmail('');
+    setPassword('');
   };
 
   return (
