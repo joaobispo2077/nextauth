@@ -1,7 +1,7 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 
 import Router from 'next/router';
-import { setCookie } from 'nookies';
+import { parseCookies, setCookie } from 'nookies';
 
 import { api } from '../services/api';
 
@@ -28,6 +28,18 @@ export const AuthProvider: React.FC = ({ children }) => {
   const [user, setUser] = useState<User>();
   const isAuthenticated = !!user;
 
+  useEffect(() => {
+    const { 'nextauth.token': token } = parseCookies();
+
+    if (token) {
+      api.get('/me').then((response) => {
+        const { email, permissions, roles } = response.data;
+
+        setUser({ email, permissions, roles });
+      });
+    }
+  }, []);
+
   async function signIn({ email, password }: SignInCredentials) {
     try {
       const response = await api.post('/sessions', { email, password });
@@ -42,6 +54,9 @@ export const AuthProvider: React.FC = ({ children }) => {
         maxAge: 30 * 24 * 60 * 60, // 30 days
         path: '/',
       });
+
+      api.defaults.headers['authorization'] = `Bearer ${token}`;
+
       Router.push('/dashboard');
     } catch (err: any) {
       console.error(err);
