@@ -1,14 +1,16 @@
 import axios, { AxiosError } from 'axios';
 import { parseCookies, setCookie } from 'nookies';
 
-type RequestFailure = {
+import { signOut } from '../../contexts/AuthContext';
+
+type handleRequestFailurePayload = {
   onSuccess: (toen: string) => void;
   onFailure: (error: AxiosError) => void;
 };
 
 let cookies = parseCookies();
 let isRefreshing = false;
-let failedRequestsQueue: RequestFailure[] = [];
+let failedRequestsQueue: handleRequestFailurePayload[] = [];
 
 const api = axios.create({
   baseURL: 'http://localhost:3333',
@@ -73,9 +75,11 @@ api.interceptors.response.use(
           });
         });
       } else {
-        console.log('vish');
+        signOut();
       }
     }
+
+    return Promise.reject(error);
   },
 );
 
