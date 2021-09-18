@@ -5,6 +5,7 @@ import React, { FormEvent, useState } from 'react';
 import { parseCookies } from 'nookies';
 
 import { useAuth } from '../hooks/useAuth';
+import { withSSRGuest } from '../utils/withSSRGuest';
 
 import styles from './styles.module.css';
 
@@ -43,19 +44,8 @@ const Home: NextPage = () => {
 
 export default Home;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const cookies = parseCookies(context);
-  console.log('getServerSideProps', cookies);
-
-  if (cookies['nextauth.token']) {
-    return {
-      redirect: {
-        destination: '/dashboard',
-        permanent: false,
-      },
-    };
-  }
+export const getServerSideProps = withSSRGuest(async (context) => {
   return {
     props: {},
   };
-};
+});
