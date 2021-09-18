@@ -4,7 +4,7 @@ import { parseCookies, setCookie } from 'nookies';
 import { signOut } from '../../contexts/AuthContext';
 
 type handleRequestFailurePayload = {
-  onSuccess: (toen: string) => void;
+  onSuccess: (token: string) => void;
   onFailure: (error: AxiosError) => void;
 };
 
