@@ -18,6 +18,19 @@ export default function Dashboard() {
 }
 
 export const getServerSideProps = withSSRAuth(async (context) => {
+  // try {
+  //   // ECCONRESET ERROR
+  //   console.log('running');
+  //   const apiClient = setupAPIClient(context);
+  //   console.log('apiClient');
+  //   const response = await apiClient.get('/me');
+  //   console.log('data is', response.data);
+  // } catch (error) {
+  //   console.log(error);
+  //   console.log(error.name);
+  //   console.log(error.message);
+  //   console.log('error');
+  // }
   return {
     props: {},
   };
