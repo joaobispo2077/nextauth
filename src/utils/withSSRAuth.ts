@@ -4,16 +4,28 @@ import {
   GetServerSidePropsResult,
 } from 'next';
 import { destroyCookie, parseCookies } from 'nookies';
+import jwt from 'jsonwebtoken';
 
 import { AuthTokenError } from '../errors/AuthTokenError';
 
-export function withSSRAuth<T>(fn: GetServerSideProps<T>) {
+import { validateUserAccess } from './validadeUserAccess';
+
+type WithSSRAuthOptions = {
+  permissions?: string[];
+  roles?: string[];
+};
+
+export function withSSRAuth<T>(
+  fn: GetServerSideProps<T>,
+  options?: WithSSRAuthOptions,
+) {
   return async (
     context: GetServerSidePropsContext,
   ): Promise<GetServerSidePropsResult<T> | void> => {
     const cookies = parseCookies(context);
+    const token = cookies['nextauth.token'];
 
-    if (!cookies['nextauth.token']) {
+    if (!token) {
       return {
         redirect: {
           destination: '/',
@@ -22,6 +34,25 @@ export function withSSRAuth<T>(fn: GetServerSideProps<T>) {
       };
     }
 
+    if (options) {
+      const user = jwt.decode(token) as Required<WithSSRAuthOptions>;
+      const { roles, permissions } = options;
+
+      const userCanSeePage = validateUserAccess({
+        user,
+        roles,
+        permissions,
+      });
+
+      if (!userCanSeePage) {
+        return {
+          redirect: {
+            destination: '/dashboard',
+            permanent: false,
+          },
+        };
+      }
+    }
     try {
       return await fn(context);
     } catch (err) {

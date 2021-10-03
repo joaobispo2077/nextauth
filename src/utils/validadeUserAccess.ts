@@ -9,7 +9,7 @@ type ValidateUserPermissionsParams = {
   roles?: string[];
 };
 
-export function validadeUserAccess({
+export function validateUserAccess({
   user,
   permissions = [],
   roles = [],

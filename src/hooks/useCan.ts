@@ -1,4 +1,4 @@
-import { validadeUserAccess } from '../utils/validadeUserAccess';
+import { validateUserAccess } from '../utils/validadeUserAccess';
 
 import { useAuth } from './useAuth';
 
@@ -14,7 +14,7 @@ export function useCan({ permissions = [], roles = [] }: UseCanParams) {
     return false;
   }
 
-  const userHasValidPermissions = validadeUserAccess({
+  const userHasValidPermissions = validateUserAccess({
     user,
     permissions,
     roles,
